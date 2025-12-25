@@ -6,7 +6,7 @@ const createTournament = async (req, res) => {
        res.json(tournament);
    }catch(err) {
        if(res.name === "ValidationError") {
-           return res.status(400).json({error: err.error});
+           return res.status(400).json({errors: err.errors});
        }
        res.json(err);
    }
@@ -36,7 +36,7 @@ const updateTournament = async (req, res) => {
         res.json(tournament);
     }catch(err){
         if(res.name === "ValidationError") {
-            return res.status(400).json({error: err.error});
+            return res.status(400).json({errors: err.errors});
         }
         res.json(err);
     }
