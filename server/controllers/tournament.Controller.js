@@ -50,3 +50,5 @@ const deleteAnExistingTournament = async (req, res) => {
         res.json(err);
     }
 }
+
+module.exports = { createTournament, getAllTournaments, updateTournament, getSingleTournament, deleteAnExistingTournament };
