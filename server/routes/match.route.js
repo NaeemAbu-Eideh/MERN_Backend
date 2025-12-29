@@ -1,12 +1,12 @@
 const router = require("express").Router();
 const matchController = require("./../controllers/match.Controller");
-const userValidator = require("../validators/user.validator");
-const loginValidator = require("../validators/login.validator");
+const validateMatch = require("../validators/match.validator");
 
 
-router.post("/api/creatematch", userValidator, matchController.createMatch);
 
-router.post("/api/match/:id", loginValidator, matchController.updateMatch);
+router.post("/api/creatematch", validateMatch, matchController.createMatch);
+
+// router.post("/api/match/:id",  matchController.updateMatch);
 
 router.get("/api/matches", matchController.findAllMatches);
 
