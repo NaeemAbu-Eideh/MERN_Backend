@@ -8,6 +8,8 @@ const tournamentRoutes = require("./routes/tournament.route")
 const stadiumRoutes = require("./routes/stadium.route");
 const teamRoutes = require("./routes/team.route");
 const matchRoutes = require("./routes/match.route")
+const geminiRoutes = require("./routes/ai.route");
+
 const app = express();
 
 app.use(cors());
@@ -15,10 +17,12 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true}))
 
 app.use(userRoutes, tournamentRoutes, stadiumRoutes, teamRoutes, matchRoutes);
+app.use(userRoutes);
+app.use("/api/ai", geminiRoutes);
 
 connectDB(process.env.MONGO_URI);
 
-const port = process.env.PORT;
+const port = process.env.PORT || 3000;
 
 app.listen(
     port,
