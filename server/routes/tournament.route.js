@@ -1,16 +1,15 @@
 const router = require("express").Router();
 const TournamentController = require("./../controllers/tournament.Controller");
-const userValidator = require("../validators/user.validator");
-const loginValidator = require("../validators/login.validator");
+const validateTournament = require("../validators/tournament.validator");
 
 
-router.post("/api/createtournament", userValidator, TournamentController.createTournament);
+router.post("/api/createTournament", validateTournament, TournamentController.createTournament);
 
-router.post("/api/tournament/:id", loginValidator, TournamentController.updateTournament);
+router.post("/api/tournament/:id",  TournamentController.updateTournament);
 
 router.get("/api/tournaments", TournamentController.getAllTournaments);
 
-router.get("/api/tournaments/:id", TournamentController.getSingleTournament)
+router.get("/api/tournaments/:id", TournamentController.getSingleTournament);
 
 module.exports = router;
 

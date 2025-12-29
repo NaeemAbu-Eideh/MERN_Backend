@@ -1,16 +1,22 @@
 const Match = require('../models/Match.model');
+const { validationResult } = require("express-validator");
 
 const createMatch = async (req, res) => {
-    try{
-        const match = await Match.create(req.body);
-        res.json(match);
-    }catch(err){
-        if(err.name === 'ValidationError'){
-            return res.status(400).json({errors: err.errors});
-        }
-        res.json(err)
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(422).json({ errors: errors.mapped() });
     }
-}
+
+    try {
+        const match = await Match.create(req.body);
+        return res.status(201).json(match);
+    } catch (err) {
+        if (err.name === "ValidationError") {
+            return res.status(400).json({ errors: err.errors });
+        }
+        return res.status(500).json({ message: "Server error", error: err.message });
+    }
+};
 
 const updateMatch = async (req, res) => {
     try{

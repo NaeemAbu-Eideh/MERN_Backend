@@ -1,12 +1,51 @@
 const User = require("./../models/user.model");
 const { validationResult } = require("express-validator");
 const bcrypt = require("bcrypt");
-const {json} = require("express");
+// const jwt = require("jsonwebtoken");
+
+
+const bulkRegister = async (req, res) => {
+    try {
+        const users = req.body; // لازم تكون Array
+
+        if (!Array.isArray(users) || users.length === 0) {
+            return res.status(400).json({ message: "Body must be a non-empty array" });
+        }
+
+        // حضّر الداتا: احذف confirmPassword واعمل hash
+        const prepared = await Promise.all(
+            users.map(async (u) => {
+                if (!u.email || !u.password) return null;
+
+                const hashed = await bcrypt.hash(u.password, 10);
+
+                return {
+                    firstName: u.firstName,
+                    lastName: u.lastName,
+                    email: u.email.toLowerCase().trim(),
+                    password: hashed,
+                    role: u.role || "user"
+                };
+            })
+        );
+
+        const clean = prepared.filter(Boolean);
+
+        // insertMany أسرع من create لكل واحد
+        const created = await User.insertMany(clean, { ordered: false });
+        return res.status(201).json({ count: created.length, users: created });
+    } catch (err) {
+        // لو في duplicates بالإيميل، ordered:false بخلي الباقي يكمل
+        return res.status(500).json({ message: "Bulk insert error", error: err });
+    }
+};
+
+
 
 const createUser = async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        res.status(422).json({ errors: errors.mapped() });
+        return res.status(422).json({ errors: errors.mapped() });
     }
     try {
         delete req.body.confirmPassword;
@@ -63,4 +102,4 @@ getUserById = async (req, res) => {
     }
 };
 
-module.exports = {createUser, getAllUsers, getUserById, login};
+module.exports = {createUser, getAllUsers, getUserById, login, bulkRegister};

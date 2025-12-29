@@ -51,7 +51,7 @@ const TournamentSchema = new Schema(
             ref: "User",
         }],
         participantsTeams: [{
-            type: Schema.Types.ObjectId, // Assuming you have a 'Team' model
+            type: Schema.Types.ObjectId,
             ref: "Team",
         }],
     },

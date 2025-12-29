@@ -4,12 +4,12 @@ const User = require("../models/user.model")
 const validateUser = [
         body("firstName")
             .notEmpty().withMessage("firstName is required")
-            .isLength({min: 2}).withMessage("firstName must be at least 2 chars")
+            .isLength({min: 3}).withMessage("firstName must be at least 3 chars")
             .trim(),
 
         body("lastName")
             .notEmpty().withMessage("lastName is required")
-            .isLength({min: 2}).withMessage("lastName must be at least 2 chars")
+            .isLength({min: 3}).withMessage("lastName must be at least 3 chars")
             .trim(),
 
         body("email")
@@ -24,13 +24,6 @@ const validateUser = [
                 return true;
             }),
 
-        body("dateOfBirth")
-            .notEmpty().withMessage("dateOfBirth is required")
-            .isISO8601().withMessage("dateOfBirth must be a valid date (YYYY-MM-DD)")
-            .isBefore(new Date().toISOString().split("T")[0])
-            .withMessage("dateOfBirth cannot be in the future")
-            .toDate(),
-
         body("password")
             .notEmpty().withMessage("password is required")
             .isLength({min: 8}).withMessage("password must be at least 8 chars"),
@@ -39,6 +32,9 @@ const validateUser = [
             .notEmpty().withMessage("confirmPassword is required")
             .custom((value, {req}) => value === req.body.password)
             .withMessage("Passwords do not match"),
+
+        body("role")
+            .notEmpty().withMessage("role is required")
     ]
 ;
 
