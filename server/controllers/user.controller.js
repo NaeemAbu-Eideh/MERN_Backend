@@ -97,8 +97,9 @@ const login = async (req, res) => {
 
 const getAllUsers = async (req, res) => {
     try{
-        const users = await User.find();
-        res.json(users)
+        // const users = await User.find();
+        const ids = await User.distinct("_id");
+        res.json(ids)
     }catch (err) {
         res.json(err);
     }

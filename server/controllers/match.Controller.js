@@ -2,19 +2,27 @@ const Match = require('../models/Match.model');
 const { validationResult } = require("express-validator");
 
 const createMatch = async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(422).json({ errors: errors.mapped() });
-    }
-
     try {
-        const match = await Match.create(req.body);
-        return res.status(201).json(match);
-    } catch (err) {
-        if (err.name === "ValidationError") {
-            return res.status(400).json({ errors: err.errors });
+        const { tournamentId, stadiumId, startTime, endTime, teamAId, teamBId, status } = req.body;
+
+        if (!tournamentId || !stadiumId || !startTime || !endTime || !teamAId || !teamBId) {
+            return res.status(400).json({ message: "Missing required fields" });
         }
-        return res.status(500).json({ message: "Server error", error: err.message });
+
+        const match = await Match.create({
+            tournamentId,
+            stadiumId,
+            startTime,
+            endTime,
+            sideA: { type: "team", refId: teamAId },
+            sideB: { type: "team", refId: teamBId },
+            status: status || "scheduled",
+        });
+
+        return res.status(201).json({ success: true, data: match });
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({ message: "Server error" });
     }
 };
 

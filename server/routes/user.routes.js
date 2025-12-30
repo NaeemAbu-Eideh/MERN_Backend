@@ -3,7 +3,7 @@ const UserController = require("./../controllers/user.controller");
 const userValidator = require("../validators/user.validator");
 const loginValidator = require("../validators/login.validator");
 
-// router.post("/api/register/bulk",userValidator, UserController.bulkRegister);
+router.post("/api/register/bulk",userValidator, UserController.bulkRegister);
 
 router.post("/api/createUser", userValidator, UserController.createUser);
 

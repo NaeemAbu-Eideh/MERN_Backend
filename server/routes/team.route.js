@@ -8,7 +8,7 @@ router.post("/api/createTeamsBulk", TeamController.createTeamsBulk);
 
 router.post("/api/createTeam", validateTeam, TeamController.createTeam);
 
-router.post("/api/team/:id", TeamController.updateTeam);
+router.put("/api/team/:id", TeamController.updateTeam);
 
 router.get("/api/teams", TeamController.getAllTeams);
 
