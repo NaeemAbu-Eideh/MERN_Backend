@@ -110,7 +110,10 @@ CLIENT_URL=http://localhost:5173
 # Optional (AI)
 AI_PROVIDER=google|openai|none
 AI_API_KEY=your_key
+```
 
+## Requiernments
+```
 # create project folder
 mkdir your-project-name
 cd your-project-name
@@ -137,6 +140,4 @@ npm install socket.io
 # AI SDK
 npm i openai
 
-
-
-
+```
