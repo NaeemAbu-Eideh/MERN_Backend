@@ -11,5 +11,7 @@ router.get("/api/tournaments", TournamentController.getAllTournaments);
 
 router.get("/api/tournaments/:id", TournamentController.getSingleTournament);
 
+router.delete("/api/tournaments/:id", TournamentController.deleteAnExistingTournament);
+
 module.exports = router;
 

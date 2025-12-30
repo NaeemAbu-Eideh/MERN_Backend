@@ -54,6 +54,7 @@ const createUser = async (req, res) => {
 };
 
 const login = async (req, res) => {
+    console.log("naeem")
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(422).json({ errors: errors.mapped() });

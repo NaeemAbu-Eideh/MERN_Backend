@@ -15,6 +15,8 @@ router.get("/api/joins", joinController.findAllJoins);
 
 router.get("/api/joins/:id", joinController.findOneJoin)
 
+router.delete("/api/joins/:id", joinController.deleteJoin)
+
 // router.post("/api/tournaments/:id/join", TournamentController.joinTournament);
 
 module.exports = router;

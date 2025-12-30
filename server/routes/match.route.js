@@ -12,5 +12,7 @@ router.get("/api/matches", matchController.findAllMatches);
 
 router.get("/api/matches/:id", matchController.findOneMatch)
 
+router.delete("/api/matches/:id", matchController.deleteMatch)
+
 module.exports = router;
 

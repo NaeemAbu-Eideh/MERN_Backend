@@ -12,5 +12,7 @@ router.get("/api/stadiums", stadiumController.findAllStadiums);
 
 router.get("/api/stadiums/:id", stadiumController.findOneStadium)
 
+router.delete("/api/stadiums/:id", stadiumController.deleteStadium)
+
 module.exports = router;
 
