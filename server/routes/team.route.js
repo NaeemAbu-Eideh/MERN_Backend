@@ -14,4 +14,6 @@ router.get("/api/teams", TeamController.getAllTeams);
 
 router.get("/api/teams/:id", TeamController.getSingleTeam);
 
+router.delete("/api/teams/:id", TeamController.deleteTeam);
+
 module.exports = router;

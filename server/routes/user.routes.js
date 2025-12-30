@@ -13,5 +13,6 @@ router.get("/api/users", UserController.getAllUsers);
 
 router.get("/api/users/:id", UserController.getUserById)
 
+
 module.exports = router;
 

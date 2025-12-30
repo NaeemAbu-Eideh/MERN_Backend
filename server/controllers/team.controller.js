@@ -7,6 +7,16 @@ const dedupeIds = (arr = []) => {
     return uniq.map((id) => new mongoose.Types.ObjectId(id));
 };
 
+
+const deleteTeam = async (req, res) => {
+    try{
+        const team = await Team.findByIdAndDelete({_id: req.params.id})
+        res.json(team)
+    }catch(err){
+        res.json(err)
+    }
+}
+
 const getMyTeams = async (req, res) => {
     try {
         const { userId } = req.params;
@@ -133,5 +143,6 @@ module.exports = {
     getSingleTeam,
     updateTeam,
     createTeamsBulk,
-    getMyTeams
+    getMyTeams,
+    deleteTeam
 };
