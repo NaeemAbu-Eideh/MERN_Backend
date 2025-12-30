@@ -1,5 +1,6 @@
 const Stadium = require('../models/Stadium.model');
 const { validationResult } = require("express-validator");
+const mongoose = require("mongoose");
 
 const bulkCreateStadiums = async (req, res) => {
     try {
@@ -51,16 +52,31 @@ const createStadium = async (req, res) => {
 }
 
 const updateStadium = async (req, res) => {
-    try{
-        const stadium = await Stadium.findByIdAndUpdate({ _id: req.params.id }, req.body, { new: true, runValidators: true });
-        res.json(stadium);
-    }catch(err){
-        if(err.name === 'ValidationError'){
-            return res.status(400).json({errors: err.errors});
-        }
-        res.json(err);
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(422).json({ errors: errors.mapped() });
     }
-}
+
+    try {
+        if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+            return res.status(400).json({ message: "Invalid stadium id" });
+        }
+
+        const stadium = await Stadium.findByIdAndUpdate(
+            req.params.id,
+            req.body,
+            { new: true, runValidators: true }
+        );
+
+        if (!stadium) return res.status(404).json({ message: "Stadium not found" });
+
+        return res.json({ data: stadium });
+    } catch (err) {
+        if (err.name === "CastError") return res.status(400).json({ message: "Invalid stadium id" });
+        if (err.name === "ValidationError") return res.status(422).json({ errors: err.errors });
+        return res.status(500).json({ message: "Server error", error: err.message });
+    }
+};
 
 const deleteStadium = async (req, res) => {
     try{
@@ -73,7 +89,7 @@ const deleteStadium = async (req, res) => {
 
 const findOneStadium = async (req, res) => {
     try{
-        const stadium = await Stadium.findById({_id : req.params._id});
+        const stadium = await Stadium.findById(req.params.id);
         res.json(stadium);
     }catch(err){
         res.json(err);

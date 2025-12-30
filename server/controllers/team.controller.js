@@ -7,6 +7,24 @@ const dedupeIds = (arr = []) => {
     return uniq.map((id) => new mongoose.Types.ObjectId(id));
 };
 
+const getMyTeams = async (req, res) => {
+    try {
+        const { userId } = req.params;
+
+        if (!mongoose.Types.ObjectId.isValid(userId)) {
+            return res.status(400).json({ message: "Invalid userId" });
+        }
+
+        const teams = await Team.find({
+            $or: [{ ownerUserId: userId }, { members: userId }],
+        }).select("_id name");
+
+        return res.json({ data: teams });
+    } catch (err) {
+        return res.status(500).json({ message: "Server error", error: err.message });
+    }
+};
+
 const createTeamsBulk = async (req, res) => {
     try {
         const teams = req.body; // لازم Array
@@ -114,5 +132,6 @@ module.exports = {
     getAllTeams,
     getSingleTeam,
     updateTeam,
-    createTeamsBulk
+    createTeamsBulk,
+    getMyTeams
 };

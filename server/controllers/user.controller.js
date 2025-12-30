@@ -1,18 +1,16 @@
 const User = require("./../models/user.model");
 const { validationResult } = require("express-validator");
 const bcrypt = require("bcrypt");
-// const jwt = require("jsonwebtoken");
-
+const jwt = require("jsonwebtoken");
 
 const bulkRegister = async (req, res) => {
     try {
-        const users = req.body; // لازم تكون Array
+        const users = req.body;
 
         if (!Array.isArray(users) || users.length === 0) {
             return res.status(400).json({ message: "Body must be a non-empty array" });
         }
 
-        // حضّر الداتا: احذف confirmPassword واعمل hash
         const prepared = await Promise.all(
             users.map(async (u) => {
                 if (!u.email || !u.password) return null;
@@ -31,7 +29,6 @@ const bulkRegister = async (req, res) => {
 
         const clean = prepared.filter(Boolean);
 
-        // insertMany أسرع من create لكل واحد
         const created = await User.insertMany(clean, { ordered: false });
         return res.status(201).json({ count: created.length, users: created });
     } catch (err) {
@@ -39,8 +36,6 @@ const bulkRegister = async (req, res) => {
         return res.status(500).json({ message: "Bulk insert error", error: err });
     }
 };
-
-
 
 const createUser = async (req, res) => {
     const errors = validationResult(req);
@@ -52,6 +47,7 @@ const createUser = async (req, res) => {
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
         const user = await User.create({...req.body, role: req.body.role || "user", password: hashedPassword,});
         res.status(201).json({ success: true, userId: user._id });
+        // jwt.
     } catch (error) {
         res.status(500).json({ message: "Server error" });
     }
@@ -62,25 +58,40 @@ const login = async (req, res) => {
     if (!errors.isEmpty()) {
         return res.status(422).json({ errors: errors.mapped() });
     }
+
     try {
         const { email, password } = req.body;
+
         const user = await User.findOne({ email }).select("+password");
         if (!user) {
             return res.status(401).json({ message: "Incorrect email or password" });
         }
+
         const isCorrect = await bcrypt.compare(password, user.password);
         if (!isCorrect) {
             return res.status(401).json({ message: "Incorrect email or password" });
         }
-        res.json({success: true, user: {
+
+        // ✅ create token
+        const token = jwt.sign(
+            { id: user._id, role: user.role },
+            process.env.JWT_SECRET,
+            { expiresIn: "7d" }
+        );
+
+        return res.json({
+            success: true,
+            token, // ✅ IMPORTANT
+            user: {
                 _id: user._id,
                 firstName: user.firstName,
                 lastName: user.lastName,
                 email: user.email,
-                role: user.role
-            }});
+                role: user.role,
+            },
+        });
     } catch (error) {
-        res.status(500).json({ message: "Server error" });
+        return res.status(500).json({ message: "Server error" });
     }
 };
 
@@ -92,6 +103,8 @@ const getAllUsers = async (req, res) => {
         res.json(err);
     }
 }
+
+
 
 getUserById = async (req, res) => {
     try{

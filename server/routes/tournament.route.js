@@ -5,7 +5,7 @@ const validateTournament = require("../validators/tournament.validator");
 
 router.post("/api/createTournament", validateTournament, TournamentController.createTournament);
 
-router.post("/api/tournament/:id",  TournamentController.updateTournament);
+router.put("/api/tournaments/:id", validateTournament, TournamentController.updateTournament);
 
 router.get("/api/tournaments", TournamentController.getAllTournaments);
 

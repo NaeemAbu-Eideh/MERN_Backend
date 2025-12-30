@@ -42,19 +42,32 @@ const getSingleTournament = async (req, res) => {
 }
 
 const updateTournament = async (req, res) => {
-    try {
-        const tournament = Tournament.findByIdAndUpdate({_id: req.params.id}, req.body, {
-            new: true,
-            runValidators: true
-        });
-        res.json(tournament);
-    } catch (err) {
-        if (res.name === "ValidationError") {
-            return res.status(400).json({errors: err.errors});
-        }
-        res.json(err);
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(422).json({ errors: errors.mapped() });
     }
-}
+
+    try {
+        delete req.body.createdByAdminId;
+
+        const tournament = await Tournament.findByIdAndUpdate(
+            req.params.id,
+            req.body,
+            { new: true, runValidators: true }
+        );
+
+        if (!tournament) {
+            return res.status(404).json({ message: "Tournament not found" });
+        }
+
+        return res.json({ data: tournament });
+    } catch (err) {
+        if (err.name === "ValidationError") {
+            return res.status(422).json({ errors: err.errors });
+        }
+        return res.status(500).json({ message: "Server error", error: err.message });
+    }
+};
 
 const deleteAnExistingTournament = async (req, res) => {
     try {

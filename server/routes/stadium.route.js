@@ -6,7 +6,7 @@ const validateStadium = require("../validators/stadium.validator");
 
 router.post("/api/createStadium", validateStadium, stadiumController.createStadium);
 
-router.post("/api/stadium/:id", stadiumController.updateStadium);
+router.put("/api/stadiums/:id", validateStadium, stadiumController.updateStadium);
 
 router.get("/api/stadiums", stadiumController.findAllStadiums);
 
