@@ -101,11 +101,7 @@ PORT=8008
 MONGO_URI=your_mongodb_connection_string
 
 JWT_ACCESS_SECRET=your_access_secret
-JWT_REFRESH_SECRET=your_refresh_secret
-JWT_ACCESS_EXPIRES=15m
 JWT_REFRESH_EXPIRES=7d
-
-CLIENT_URL=http://localhost:5173
 
 # Optional (AI)
 AI_PROVIDER=google|openai|none
